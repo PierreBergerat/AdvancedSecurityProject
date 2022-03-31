@@ -1,16 +1,16 @@
-# Advanced Security Project : MacOS Excel Ransomware
-- [Advanced Security Project : MacOS Excel Ransomware](#advanced-security-project--macos-excel-ransomware)
-  - [Description](#description)
-  - [Workflow](#workflow)
-  - [Detailed explanations](#detailed-explanations)
-    - [1. Http Server](#1-http-server)
-    - [2. VBA Macro](#2-vba-macro)
-    - [3. Update.zip](#3-updatezip)
-    - [4. Socket Server](#4-socket-server)
-## Description
+# Advanced Security project : Ransomware
+- [Advanced Security project : Ransomware](#advanced-security-project--ransomware)
+  - [1. Description](#1-description)
+  - [2. Workflow](#2-workflow)
+  - [3. Detailed explanations](#3-detailed-explanations)
+    - [3.1. Http Server](#31-http-server)
+    - [3.2. VBA Macro](#32-vba-macro)
+    - [3.3. Update.zip](#33-updatezip)
+    - [3.4. Socket Server](#34-socket-server)
+## 1. Description
 This repository aims to demonstrate a security flaw in an office 2019 version as well as a way to use this flaw in order to gain complete access to a compromised system by the use of various techniques specific to MacOS.
 
-## Workflow
+## 2. Workflow
 The complete workflow works as follows :
 1. The victim opens an injected Microsoft Excel file which will fire a macro as soon as it is opened.
 2. This macro will request and download two files from the attacker server (which lays in \_\_main__.py). These two files are :
@@ -22,8 +22,8 @@ The complete workflow works as follows :
       1. Create a new disk partition encrypted with a 127 bits password
       2. Move every file from the desktop to this encrypted file
       3. Unmount the encrypted drive
-## Detailed explanations
-### 1. Http Server
-### 2. VBA Macro
-### 3. Update.zip
-### 4. Socket Server
+## 3. Detailed explanations
+### 3.1. Http Server
+### 3.2. VBA Macro
+### 3.3. Update.zip
+### 3.4. Socket Server
