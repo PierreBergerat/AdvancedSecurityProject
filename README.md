@@ -1,19 +1,29 @@
 # Advanced Security Project : MacOS Excel Ransomware
+- [Advanced Security Project : MacOS Excel Ransomware](#advanced-security-project--macos-excel-ransomware)
+  - [Description](#description)
+  - [Workflow](#workflow)
+  - [Detailed explanations](#detailed-explanations)
+    - [1. Http Server](#1-http-server)
+    - [2. VBA Macro](#2-vba-macro)
+    - [3. Update.zip](#3-updatezip)
+    - [4. Socket Server](#4-socket-server)
 ## Description
-When run, this script will ask for user password then proceed to create a new encrypted Volume called "OhNoItsLocked" with a key of 504 bits (maximum key length allowed by MacOS for a drive password). Using Rsync, all files contained in ~/ (User home directory) will be moved to this new drive before it is unmounted. Files containing an encrypted password and a tutorial to send the ransom will then be generated on the Desktop.
+This repository aims to demonstrate a security flaw in an office 2019 version as well as a way to use this flaw in order to gain complete access to a compromised system by the use of various techniques specific to MacOS.
+
+## Workflow
+The complete workflow works as follows :
+1. The victim opens an injected Microsoft Excel file which will fire a macro as soon as it is opened.
+2. This macro will request and download two files from the attacker server (which lays in \_\_main__.py). These two files are :
+   1. A zip file containing a folder called LaunchAgents which itself contains a plist file allowing for a reverse shell at the restart of the system
+   2. A python file which uses MacOS librairies in order to add the zip file as a login item, which will uncompress it when the victim will restart or relog in the system
+3. Once the system is reloaded and the reverse shell is initiated, the victim will connect to a socket server (server.py) which will allow the attaquer to input commands into the victim's system.
+   1. The "phishing" command will pop a native window asking for a password in order to install a fake update
+   2. The "ransom" command will
+      1. Create a new disk partition encrypted with a 127 bits password
+      2. Move every file from the desktop to this encrypted file
+      3. Unmount the encrypted drive
 ## Detailed explanations
-1. Creation of a temporary drive that will contain the Excel icon
-2. Creation of said icon from Base64 decode. This way, the program won't rely on the default installation path of Excel to query the icon
-3. Creation of local variables containing informations about the user (name and id)
-4. Display of an Excel looking dialog asking for the user's password
-   * Verification of the password and loop to point 4 if wrong
-5. Generation of a 63 bytes long password that will be used to encrypt the drive
-6. Creation of the encrypted drive with the password generated in the previous point
-7. Migration of all the files contained in ~/ onto the new drive
-8. As the migration is used with sudo privileges, the property of the files needs to be given back to the regular user (instead of root)
-9. Unmounting of the encrypted drive
-10. Creation of the attacker public key from Base64
-11. Encryption of the password of the drive with the public key and storage of the encrypted password on the Desktop
-12. Creation of a shortcut to "Disk Utility.app" on the desktop (in order to allow unexperienced users to access it easily)
-13. Creation of the ransom message on the Desktop
-14. Destruction of the temporary files
+### 1. Http Server
+### 2. VBA Macro
+### 3. Update.zip
+### 4. Socket Server
