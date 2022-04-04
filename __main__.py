@@ -4,11 +4,12 @@ from SocketServer import startSocketServer
 from threading import Thread
 from time import sleep
 from pathlib import Path
+from GetIP import getLocalIP
 import signal
 import InfectedUpdate
 
 
-HOST = '192.168.1.29'
+HOST = getLocalIP()
 HTTP_PORT = 8080
 TCP_PORT = 5050
 
